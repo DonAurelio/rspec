@@ -34,87 +34,88 @@ def acc_time_serie(signal,fm):
 def spec_period_serie():
     return numpy.arange(start=0.02,stop=(4.0+0.02),step=0.02).tolist()
 
-# def response_spectrum(signal,damping,sv,fm):
-#     """
-#         signal: Señal en voltios
-#         damping: Razón de amortiguamiento
-#         sv: Sensibilidad del sensor
-#         fm: Frecuencia de muestreo
-#     """
+def rspectrum(signal,damping,sv,fm):
+    """
+        signal: Señal en voltios
+        damping: Razón de amortiguamiento
+        sv: Sensibilidad del sensor
+        fm: Frecuencia de muestreo
+    """
 
-#     # DATOS INICIALES
-#     # Periodo de cada oscilador que seran sometidos a la señal de acceleraciones
-#     ts = arange(start=0.02,stop=(4.0+0.02),step=0.02) 
+    # DATOS INICIALES
+    # Periodo de cada oscilador que seran sometidos a la señal de acceleraciones
+    ts = arange(start=0.02,stop=(4.0+0.02),step=0.02) 
 
-#     T = 1.0 # Periodo
-#     z = damping # Razón de amortiguamiento
-#     M = 1.0 # Masa
-#     DT = 1.0/fm # Delta tiempo
+    T = 1.0 # Periodo
+    z = damping # Razón de amortiguamiento
+    M = 1.0 # Masa
+    DT = 1.0/fm # Delta tiempo
 
-#     ys = signal[:]
+    ys = signal[:]
 
-#     # FILTRADO DE SEÑAL
-#     # ys = bandpassfilter(signal=ys,densidad=(fm/2.0)) # Pasabanda
-#     filtered_signal = ys[:]
+    # FILTRADO DE SEÑAL
+    # ys = bandpassfilter(signal=ys,densidad=(fm/2.0)) # Pasabanda
+    filtered_signal = ys[:]
     
-#     # Tabla datos espectro de respuesta en desplzamiento
-#     Dmaxs = []
-#     # Tabla datos espectro de respuesta en Pseudovelocidad
-#     Vmaxs = []
-#     # Tabla datos espectro de respuesta en Pseudoaceleración
-#     Amaxs = []
-#     # Periodos de oscilación (es el mismo para todas tablas)
-#     Ts = []
+    # Tabla datos espectro de respuesta en desplzamiento
+    Dmaxs = []
+    # Tabla datos espectro de respuesta en Pseudovelocidad
+    Vmaxs = []
+    # Tabla datos espectro de respuesta en Pseudoaceleración
+    Amaxs = []
+    # Periodos de oscilación (es el mismo para todas tablas)
+    Ts = []
 
-#     # Coefcioentes de la ecuación diferencial
-#     uis = []
-#     # Derivadas de los coeficientes de la ecuación diferencial
-#     upis = []
+    # Coefcioentes de la ecuación diferencial
+    uis = []
+    # Derivadas de los coeficientes de la ecuación diferencial
+    upis = []
 
-#     # Por cada periodo de oscilación
-#     for t in ts:
+    # Por cada periodo de oscilación
+    for t in ts:
 
-#         Wn=(2.0*pi)/t
-#         k=M*(Wn**2.0)
-#         d=DT
-#         a1=(2.71828)**(-z*Wn*d)
-#         Wd=Wn*sqrt(1.0-(z**2.0))
-#         a2=sin(Wd*d)
-#         a3=cos(Wd*d)
+        Wn=(2.0*pi)/t
+        k=M*(Wn**2.0)
+        d=DT
+        a1=(2.71828)**(-z*Wn*d)
+        Wd=Wn*sqrt(1.0-(z**2.0))
+        a2=sin(Wd*d)
+        a3=cos(Wd*d)
         
-#         A=a1*(((z/(sqrt(1.0-z**2.0)))*a2)+a3)
-#         B=a1*((1.0/Wd)*a2)
-#         C=(1.0/k)*((2.0*z/(Wn*d))+a1*((((1.0-2.0*(z**2))/(Wd*d))-(z/(sqrt(1.0-z**2.0))))*a2-(1.0+(2.0*z/(Wn*d)))*a3))
-#         D=(1.0/k)*(1.0-(2.0*z/(Wn*d))+a1*(((2.0*(z**2.0)-1.0)/(Wd*d))*a2+(2.0*z/(Wn*d))*a3))
-#         A1=-a1*(((Wn/(sqrt(1.0-z**2.0)))*a2))
-#         B1=a1*(a3-((z/(sqrt(1.0-z**2.0)))*a2))
-#         C1=(1.0/k)*((-1.0/d)+a1*(((Wn/(sqrt(1.0-(z**2.0))))+(z/(d*sqrt(1.0-(z**2.0)))))*a2+(a3/d)))
-#         D1=(1.0/(k*d))*(1.0-a1*((z/(sqrt(1.0-(z**2.0))))*a2+a3))
+        A=a1*(((z/(sqrt(1.0-z**2.0)))*a2)+a3)
+        B=a1*((1.0/Wd)*a2)
+        C=(1.0/k)*((2.0*z/(Wn*d))+a1*((((1.0-2.0*(z**2))/(Wd*d))-(z/(sqrt(1.0-z**2.0))))*a2-(1.0+(2.0*z/(Wn*d)))*a3))
+        D=(1.0/k)*(1.0-(2.0*z/(Wn*d))+a1*(((2.0*(z**2.0)-1.0)/(Wd*d))*a2+(2.0*z/(Wn*d))*a3))
+        A1=-a1*(((Wn/(sqrt(1.0-z**2.0)))*a2))
+        B1=a1*(a3-((z/(sqrt(1.0-z**2.0)))*a2))
+        C1=(1.0/k)*((-1.0/d)+a1*(((Wn/(sqrt(1.0-(z**2.0))))+(z/(d*sqrt(1.0-(z**2.0)))))*a2+(a3/d)))
+        D1=(1.0/(k*d))*(1.0-a1*((z/(sqrt(1.0-(z**2.0))))*a2+a3))
 
-#         uis = [0.0]
-#         upis = [0.0] 
+        uis = [0.0]
+        upis = [0.0] 
 
-#         # Por cada una de las acceleraciones (Columna 2 del archivo)
-#         for i in range(len(ys)-1): # Revisar por que ? el - 1
-#             uis.append( A*uis[i]+ B*upis[i] + C*ys[i] + D*ys[i+1] )
-#             upis.append( A1*uis[i] + B1*upis[i] + C1*ys[i] + D1*ys[i+1]  )
+        # Por cada una de las acceleraciones (Columna 2 del archivo)
+        for i in range(len(ys)-1): # Revisar por que ? el - 1
+            uis.append( A*uis[i]+ B*upis[i] + C*ys[i] + D*ys[i+1] )
+            upis.append( A1*uis[i] + B1*upis[i] + C1*ys[i] + D1*ys[i+1]  )
             
-#         # Tabla Dmaxs 
-#         dmax = max(map(lambda x: abs(x),uis))
-#         Dmaxs.append(dmax)
-#         # Tabla Vmaxs 
-#         vmax = max(map(lambda x: abs(x*Wn),uis))
-#         Vmaxs.append(vmax)
-#         # Tabla Amaxs
-#         amax = max(map(lambda x: abs( (x*(Wn**2)) ),uis))
-#         Amaxs.append(amax)
-#         # Tabla con valores de periodos de oscilación
-#         Ts.append(t)
+        # Tabla Dmaxs 
+        dmax = max(map(lambda x: abs(x),uis))
+        Dmaxs.append(dmax)
+        # Tabla Vmaxs 
+        vmax = max(map(lambda x: abs(x*Wn),uis))
+        Vmaxs.append(vmax)
+        # Tabla Amaxs
+        amax = max(map(lambda x: abs( (x*(Wn**2)) ),uis))
+        Amaxs.append(amax)
+        # Tabla con valores de periodos de oscilación
+        Ts.append(t)
 
-#     return Ts,Dmaxs,Vmaxs,Amaxs
+    return Ts,Dmaxs,Vmaxs,Amaxs
 
 def duhamel(p,m,w,xi,dt):
-    """ Duhamel integral calculation
+    """ Duhamel integral calculation.
+
     To determine the general response of a 
     simple lineal system. 
     
@@ -163,7 +164,8 @@ def duhamel(p,m,w,xi,dt):
     return t.tolist(), d
 
 def dmaclin(p,m,w,xi,dt):
-    """ Method of Lineal Acceleration
+    """ Method of Lineal Acceleration.
+
     To determine the general response of a 
     simple lineal system by the lineal 
     acceleration method, it is an alternative 
@@ -217,6 +219,42 @@ def dmaclin(p,m,w,xi,dt):
 
     return t.tolist(), d, v, a
 
+def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
+    """Calcula los espectros de respuesta de un sistema 
+    sencillo lineal por el método de la acceleración lineal.
 
+    Por: Jorge E. Hurtado G.
+        Universidad Nacional de Colombia
+
+    acc: vector de la acceleración del suelo
+    tmin: periodo mínimo del calculo
+    tmax: periodo máximo del calculo
+    dt_period: incremento del periodo
+    vxi: vector que contiene las fracciones de amortiguamiento
+    viscoso para las cuales se han de calcular los espectros
+    dt_accelerogram: paso del timepo del accelerograma
+
+    Sd: espectro de desplzamiento
+    Sv: espectro de velocidad
+    Sa: espectro de acceleración
+    """
+
+    l = len(vxi)
+    m = (tmax/tmin) / dt_period+1
+    T = numpy.linspace(start=tmin,stop=tmax,num=m)
+    W = map((lambda x: (2*numpy.pi)/x ), T)
+
+    Sd = []
+    Sv = []
+    Sa = []
+
+    for j in range(m):
+        w = W(j)
+        t, d,v,a = dmaclin(map( (lambda x: x*(-1)) ,acc), 1,w,xi,dt_accelerogram) 
+        Sd.append(max(map(lambda x: abs(x),d)))
+        Sv.append(max(map(lambda x: abs(x),v)))
+        Sa.append(max(map(lambda x: abs(x),a)))
+
+    return T.tolist(), Sd, Sv, Sa
 
 

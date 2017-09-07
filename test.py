@@ -1,6 +1,4 @@
-#!/usr/bin/python
-
-from signalprocessing import duhamel, dmaclin, volts_to_gales
+from signalprocessing import duhamel, dmaclin, volts_to_gales, desplin
 import time
 import csv
 
@@ -16,8 +14,9 @@ if __name__ == '__main__':
 
     cstart = time.time()
     pi = 3.14159265359
-    t0s,d0s = duhamel(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
-    t1s,d1s,v1s,a1s = dmaclin(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
+    t0,d0 = duhamel(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
+    t1,d1,v1,a1 = dmaclin(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
+    t3,sd3,sv3,sa3 = desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
     cend = time.time()
 
     # wstart = time.time()
@@ -28,7 +27,7 @@ if __name__ == '__main__':
     #       write([t,d])
     # wend = time.time()
 
-    plt.plot(t1s, d1s)
+    plt.plot(t3, sd3)
     plt.show()
 
     # print "Calculation time", (cend-cstart)
