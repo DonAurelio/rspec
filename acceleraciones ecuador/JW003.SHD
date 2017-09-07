@@ -1,0 +1,26 @@
+KW2ASC32: C:\USERS\NATHALIE\GOOGLE DRIVE\RAC\ASCII\RAC03\EVT\160417\JW003.EVT   04/17/2016 00:02 
+ Header Version 1.30   Serial number: 4088
+ Station ID: RAC3 Site: 
+  Channels: 3 Sampling rate: 100
+   Pre-event:  15 seconds.   Post-event: 20 seconds.
+Start time:  4/17/2016 (108) 0:00:08.000
+Trigger time:  4/17/2016 (108) 0:00:23.200
+Duration:  151.000 seconds, 1510 frames, 15100 scans.
+   Currently checking for presence of GPS.
+GPS updated the RTC 59 times since last reset.
+Drift Rate at last two RTC updates to UTC: -10 & 1 msec.
+Last GPS Update times were:
+  4/16/2016 (107) 20:15:41 & 4/16/2016 (107) 14:18:29.
+Last GPS TurnOn times were:
+  4/16/2016 (107) 23:03:46 & 4/16/2016 (107) 22:04:07.
+Last GPS Lock times were:
+   4/16/2016 (107) 20:21:40 & 4/16/2016 (107) 20:19:10.
+Count of times GPS failed to lock
+    within gpsMaxTurnOnTime: 20
+Main battery: 13.40V, Not charging, minimum alarm voltage: 12.0V
+
+
+Files Created: C:\USERS\NATHALIE\GOOGLE DRIVE\RAC\ASCII\RAC03\EVT\160417\JW003.SHD, 
+  C:\USERS\NATHALIE\GOOGLE DRIVE\RAC\ASCII\RAC03\EVT\160417\JW003.001
+  C:\USERS\NATHALIE\GOOGLE DRIVE\RAC\ASCII\RAC03\EVT\160417\JW003.002
+  C:\USERS\NATHALIE\GOOGLE DRIVE\RAC\ASCII\RAC03\EVT\160417\JW003.003

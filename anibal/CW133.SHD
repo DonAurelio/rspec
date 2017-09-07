@@ -1,0 +1,26 @@
+KW2ASC32: D:\OSSO\RED ACELEROGRAFOS\MATLAB APP\FINAL_GUI-2013-05-09\FINAL_GUI\CW133.EVT   05/09/2013 13:02 
+ Header Version 1.30   Serial number: 4082
+ Station ID: RAC1 Site: 
+  Channels: 3 Sampling rate: 200
+   Pre-event:  15 seconds.   Post-event: 20 seconds.
+Start time:  2/9/2013 (40) 14:16:33.000
+Trigger time:  2/9/2013 (40) 14:16:48.200
+Duration:  126.000 seconds, 1260 frames, 25200 scans.
+   Currently checking for presence of GPS.
+GPS updated the RTC 210 times since last reset.
+Drift Rate at last two RTC updates to UTC: -7 & 0 msec.
+Last GPS Update times were:
+  2/9/2013 (40) 02:12:46 & 2/8/2013 (39) 22:46:55.
+Last GPS TurnOn times were:
+  2/9/2013 (40) 14:03:14 & 2/9/2013 (40) 13:33:14.
+Last GPS Lock times were:
+   2/9/2013 (40) 02:54:37 & 2/9/2013 (40) 02:23:58.
+Count of times GPS failed to lock
+    within gpsMaxTurnOnTime: 2495
+Main battery: 13.40V, charging, minimum alarm voltage: 12.0V
+
+
+Files Created: D:\OSSO\RED ACELEROGRAFOS\MATLAB APP\FINAL_GUI-2013-05-09\FINAL_GUI\CW133.SHD, 
+  D:\OSSO\RED ACELEROGRAFOS\MATLAB APP\FINAL_GUI-2013-05-09\FINAL_GUI\CW133.001
+  D:\OSSO\RED ACELEROGRAFOS\MATLAB APP\FINAL_GUI-2013-05-09\FINAL_GUI\CW133.002
+  D:\OSSO\RED ACELEROGRAFOS\MATLAB APP\FINAL_GUI-2013-05-09\FINAL_GUI\CW133.003
