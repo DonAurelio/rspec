@@ -138,7 +138,7 @@ def duhamel(p,m,w,xi,dt):
     t = numpy.linspace(start=0.0,stop=tmax,num=n)
     # t = numpy.arange(start=0.0,stop=(tmax),step=dt)
 
-    wa = w*numpy.sqrt(1-xi**2)
+    wa = w*numpy.sqrt(1-xi**2.0)
 
     f = map((lambda x,y: x*y),p,numpy.cos(wa*t))
     g = map((lambda x,y: x*y),p,numpy.sin(wa*t))
@@ -149,8 +149,8 @@ def duhamel(p,m,w,xi,dt):
     pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),f1,f)
     ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),g1,g)
 
-    pc = map((lambda x: ((((x*dt)/m)/wa)/2) ),pc)
-    ps = map((lambda x: ((((x*dt)/m)/wa)/2) ),ps)
+    pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),pc)
+    ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),ps)
 
     c = [pc[0]]
     s = [ps[0]]
@@ -189,14 +189,14 @@ def dmaclin(p,m,w,xi,dt):
     n = len(p)
     tmax = dt*n
     t = numpy.linspace(start=0.0,stop=tmax,num=n)
-    d0 = 0
-    v0 = 0
-    a0 = 0
+    d0 = 0.0
+    v0 = 0.0
+    a0 = 0.0
 
-    k = m*w**2
-    c = 2*m*w+xi
-    kbar = (k+((3*c)/dt)) + ((6*m)/(dt**2))
-    ikbar = 1/kbar
+    k = m*w**2.0
+    c = 2.0*m*w+xi
+    kbar = (k+((3.0*c)/dt)) + ((6.0*m)/(dt**2.0))
+    ikbar = 1.0/kbar
 
     d = []
     v = []
@@ -204,12 +204,12 @@ def dmaclin(p,m,w,xi,dt):
 
     for i in range(n):
         p1 = p[i]
-        dp = m*( ((6*d0)/(dt**2))+((6*v0)/dt)+(2*a0) )
-        dp = dp + ( c*((3*d0)/dt)+(2*v0)+((dt*a0)/2) )
+        dp = m*( ((6.0*d0)/(dt**2.0))+((6.0*v0)/dt)+(2.0*a0) )
+        dp = dp + ( c*((3.0*d0)/dt)+(2.0*v0)+((dt*a0)/2.0) )
         pbar = p1 + dp
         d1 = ikbar * pbar
-        v1 = ((3*(d1-d0))/dt) - (2*v0) - ((dt*a0)/2)
-        a1 = ((6*(d1-d0))/dt**2) - ((6*v0)/dt) - (2*a0)
+        v1 = ((3.0*(d1-d0))/dt) - (2.0*v0) - ((dt*a0)/2.0)
+        a1 = ((6.0*(d1-d0))/dt**2.0) - ((6.0*v0)/dt) - (2.0*a0)
         d.append(d1)
         v.append(v1)
         a.append(a1)
@@ -230,7 +230,7 @@ def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
     tmin: periodo mínimo del calculo
     tmax: periodo máximo del calculo
     dt_period: incremento del periodo
-    vxi: vector que contiene las fracciones de amortiguamiento
+    vxi: fraccion de amortiguamiento
     viscoso para las cuales se han de calcular los espectros
     dt_accelerogram: paso del timepo del accelerograma
 
@@ -238,23 +238,37 @@ def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
     Sv: espectro de velocidad
     Sa: espectro de acceleración
     """
-
-    l = len(vxi)
-    m = (tmax/tmin) / dt_period+1
+    m = (tmax-tmin) / dt_period+1.0
+    print m
     T = numpy.linspace(start=tmin,stop=tmax,num=m)
-    W = map((lambda x: (2*numpy.pi)/x ), T)
+    # error por division por cero, el primer valor de la lista es inf
+    for i in T:
+        print (2.0*numpy.pi)/i
+    W = map((lambda x: (2.0*numpy.pi)/x ), T)
 
     Sd = []
     Sv = []
     Sa = []
 
-    for j in range(m):
-        w = W(j)
-        t, d,v,a = dmaclin(map( (lambda x: x*(-1)) ,acc), 1,w,xi,dt_accelerogram) 
+    for j in range(int(m)):
+        w = W[j]
+        t, d,v,a = dmaclin(map( (lambda x: x*(-1.0)) ,acc), 1.0,w,xi,dt_accelerogram) 
         Sd.append(max(map(lambda x: abs(x),d)))
         Sv.append(max(map(lambda x: abs(x),v)))
         Sa.append(max(map(lambda x: abs(x),a)))
 
     return T.tolist(), Sd, Sv, Sa
+
+
+def rspect(a,k,fs,tn):
+
+    t = [ (x*1/fs) for x in range(0,len(a))]
+
+    for i in range(tn):
+        T = tn[i]
+        wn = (2.0*numpy.pi)/T
+
+        H = sg.TransferFunction(num, den)
+
 
 
