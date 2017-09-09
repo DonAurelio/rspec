@@ -259,16 +259,49 @@ def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
 
     return T.tolist(), Sd, Sv, Sa
 
-
-def rspect(a,k,fs,tn):
+# Arrays in mayus
+def rspect(a,z,fs,tn):
 
     t = [ (x*1/fs) for x in range(0,len(a))]
+
+    PA = []
 
     for i in range(tn):
         T = tn[i]
         wn = (2.0*numpy.pi)/T
 
-        H = sg.TransferFunction(num, den)
+        H = sg.TransferFunction(num=[0.0, 0.0, -1.0], den=[1.0, 2.0*z*wn, wn**2])
+        H2 = sg.TransferFunction(num=[-1.0, 0.0, 0.0], den=[1.0, 2.0*z*wn, wn**2])
+
+        De = sg.lsim(system=H,U=a,T=T)
+        Ac = sg.lsim(system=H2, U=a,T=T)
+
+        D = max(map(lambda x: abs(x),De))
+        EA = max(map(lambda x: abs(x),AC)) # No sé donde se usa esta variable
+
+        PA.append( D * (2*numpy.pi/tn[i]) ** 2/9.81 )
+
+        return PA
 
 
+# function PA=funcesp(A,Z,Fs,Tn)
 
+# t=(0:length(A)-1)*1/Fs;
+
+# for n=1:length(Tn)
+
+#     T=Tn(n);
+#     wn=2*pi/T;
+
+
+#     H=tf([0 0 -1],[1 2*Z*wn wn^2]);
+#     H2=tf([-1 0 0],[1 2*Z*wn wn^2]);
+    
+#     De=lsim(H,A,t);
+#     Ac=lsim(H2,A,t);
+
+#     D(n)=max(abs(De));
+#     EA(n)=max(abs(Ac));
+
+#     PA(n)=D(n)*(2*pi/Tn(n))^2/9.81;
+# end
