@@ -16,10 +16,63 @@ if __name__ == '__main__':
     data = volts_to_gales(data,1.25)
 
     cstart = time.time()
-    pi = 3.14159265359
-    #t0,d0 = duhamel(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
-    #t1,d1,v1,a1 = dmaclin(p=data,m=1.0,w=2.0*pi,xi=0.05,dt=0.01)
+
+    # Response of a system with Duhamel Integral
+    # p: vector de carga externa
+    # m: masa del sistema
+    # w: frecuencia natural del sistema
+    # xi: fracción de amortiguamiento viscoso
+    # dt: paso de timepo
+
+    # t: vector de timepo
+    # d: desplazamiento de respuesta
+    # t,d = duhamel(p=data,m=1.0,w=2.0*numpy.pi,xi=0.05,dt=0.01)
+    
+    # Response of a system with the Lineal Acceleration Method
+    # p: vector de carga externa
+    # m: masa del sistema
+    # w: frecuencia natural del sistema
+    # xi: fracción de amortiguamiento viscoso
+    # dt: paso de timepo
+
+    # t: vector de timepo
+    # d: desplazamiento de respuesta
+    # v: velocidad en respuesta
+    # a: acceleración en respuesta
+    t, d, v, a = dmaclin(p=data,m=1.0,w=2.0*numpy.pi,xi=0.05,dt=0.01)
+
+    # Response espetrum calculation with Linear Acceleration Method
+    # acc: vector de la acceleración del suelo
+    # tmin: periodo mínimo del calculo
+    # tmax: periodo máximo del calculo
+    # dt_period: incremento del periodo
+    # vxi: fraccion de amortiguamiento
+    # viscoso para las cuales se han de calcular los espectros
+    # dt_accelerogram: paso del timepo del accelerograma
+
+    # Sd: espectro de desplzamiento
+    # Sv: espectro de velocidad
+    # Sa: espectro de acceleración
     t3,sd3,sv3,sa3 = desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
+
+    # Response spectrum with transferFunction and lsim
+    # rspect(a,z,fs,tn)
+
+    # Response espectrum with simplified lineal acceleration method
+    # p: es el accelerograma
+    # m: es la masa del sistema de 1 gdl
+    # c: es el amortiguamiento del sistema de 1 gdl
+    # k: es la rigidez del sistema de 1 gdl
+    # dt: es el incremento de tiempo con el cual se desea hallar
+    # la respuesta. El mismo que tiene que ser igual al incremento
+    # de tiempo con el cual se obtuvo el accelerograma.
+
+    # d: desplazamiento
+    # v: velocidad
+    # a: acceleración del sistema
+    t, d, v, a = lineal(p=data,m=1.0,c=0.05,k=1.0,dt=0.01) 
+
+
     cend = time.time()
 
     # wstart = time.time()

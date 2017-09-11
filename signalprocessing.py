@@ -164,7 +164,7 @@ def duhamel(p,m,w,xi,dt):
     return t.tolist(), d
 
 def dmaclin(p,m,w,xi,dt):
-    """ Method of Lineal Acceleration.
+    """ Lineal Acceleration Method.
 
     To determine the general response of a 
     simple lineal system by the lineal 
@@ -284,24 +284,46 @@ def rspect(a,z,fs,tn):
         return PA
 
 
-# function PA=funcesp(A,Z,Fs,Tn)
+def lineal(p,m,c,k,dt):
+    """Respuesta en tiempo de un sistema de un grado de
+    de libertad por método de la acceleración lineal
 
-# t=(0:length(A)-1)*1/Fs;
+    by Dinámica de Estructuras con MATLAB
 
-# for n=1:length(Tn)
+    p: es el accelerograma
+    m: es la masa del sistema de 1 gdl
+    c: es el amortiguamiento del sistema de 1 gdl
+    k: es la rigidez del sistema de 1 gdl
+    dt es el incremento de tiempo con el cual se desea hallar
+    la respuesta. El mismo que tiene que ser igual al incremento
+    de tiempo con el cual se obtuvo el accelerograma.
 
-#     T=Tn(n);
-#     wn=2*pi/T;
+    d: desplazamiento
+    v: velocidad
+    a: acceleración del sistema
+    """
 
+    n = len(p)
+    tmax = dt*n
+    t = numpy.linspace(start=0,stop=tmax,num=n)
+    ma = m + (c*dt/2) + (k*dt*(dt/6))
 
-#     H=tf([0 0 -1],[1 2*Z*wn wn^2]);
-#     H2=tf([-1 0 0],[1 2*Z*wn wn^2]);
-    
-#     De=lsim(H,A,t);
-#     Ac=lsim(H2,A,t);
+    d = [0]
+    v = [0]
+    a = [0]
 
-#     D(n)=max(abs(De));
-#     EA(n)=max(abs(Ac));
+    # range exclide the last value (n)
+    for i in range(0,n):
+        dq = -m*(p[i+1]-p[i])
+        dqa = dq - a[i]*(c*dt+k*dt*(dt/2)) - v[i]*k*dt
+        inca = dqa/ma
+        incv = a[i]*dt+inca*dt/2
+        incd = v[i]*dt+a[i]*dt*dt/2+inca*dt*dt/6
+        d.append(d[i]+incd)
+        v.append(v[i]+incv)
+        a.append(a[i]+inca)
+        d[i] = d[i+1]
+        v[i] = v[i+1]
+        a[i] = a[i+1]
 
-#     PA(n)=D(n)*(2*pi/Tn(n))^2/9.81;
-# end
+    return t.tolist(), d, v, a
