@@ -1,4 +1,12 @@
 function PA=funcesp(A,Z,Fs,Tn)
+"""
+	by Omar
+
+	A: Señal de acceleraciones
+	Z: amortiguamiento
+	Fs: Frecuencia de adqusición
+	Tn: Periodo
+"""
 
 t=(0:length(A)-1)*1/Fs;
 

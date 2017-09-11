@@ -261,6 +261,14 @@ def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
 
 # Arrays in mayus
 def rspect(a,z,fs,tn):
+    """
+        by Omar
+
+        A: Señal de acceleraciones
+        Z: amortiguamiento
+        Fs: Frecuencia de adqusición
+        Tn: Periodo
+    """
 
     t = [ (x*1/fs) for x in range(0,len(a))]
 
@@ -281,7 +289,7 @@ def rspect(a,z,fs,tn):
 
         PA.append( D * (2*numpy.pi/tn[i]) ** 2/9.81 )
 
-        return PA
+        return t, PA
 
 
 def lineal(p,m,c,k,dt):
@@ -313,7 +321,7 @@ def lineal(p,m,c,k,dt):
     a = [0]
 
     # range exclide the last value (n)
-    for i in range(0,n):
+    for i in range(0,n-1):
         dq = -m*(p[i+1]-p[i])
         dqa = dq - a[i]*(c*dt+k*dt*(dt/2)) - v[i]*k*dt
         inca = dqa/ma

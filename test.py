@@ -1,15 +1,16 @@
 #! .env/bin/python
 # -*- encoding: utf-8 -*-
 
-from signalprocessing import duhamel, dmaclin, volts_to_gales, desplin
+from signalprocessing import *
 import time
 import csv
 
-import numpy as np
+import numpy
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    file = open('GO003.001','r')
+    file = open('KD003.002','r')
+    # file = open('GO003.001','r')
     lines = file.readlines()
 
     data = list(map(lambda x: float(x),lines))
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     # d: desplazamiento de respuesta
     # v: velocidad en respuesta
     # a: acceleración en respuesta
-    t, d, v, a = dmaclin(p=data,m=1.0,w=2.0*numpy.pi,xi=0.05,dt=0.01)
+    # t, d, v, a = dmaclin(p=data,m=1.0,w=2.0*numpy.pi,xi=0.05,dt=0.01)
 
     # Response espetrum calculation with Linear Acceleration Method
     # acc: vector de la acceleración del suelo
@@ -53,10 +54,16 @@ if __name__ == '__main__':
     # Sd: espectro de desplzamiento
     # Sv: espectro de velocidad
     # Sa: espectro de acceleración
-    t3,sd3,sv3,sa3 = desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
+    # t,d,v,a = desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
 
     # Response spectrum with transferFunction and lsim
-    # rspect(a,z,fs,tn)
+    # A: Señal de acceleraciones
+    # Z: amortiguamiento
+    # Fs: Frecuencia de adqusición
+    # Tn: Periodo
+
+    # PA: Pseudo acceleración
+    # t, d = rspect(a=data,z=0.05,fs=0.01,tn=)
 
     # Response espectrum with simplified lineal acceleration method
     # p: es el accelerograma
@@ -70,7 +77,7 @@ if __name__ == '__main__':
     # d: desplazamiento
     # v: velocidad
     # a: acceleración del sistema
-    t, d, v, a = lineal(p=data,m=1.0,c=0.05,k=1.0,dt=0.01) 
+    # t, d, v, a = lineal(p=data,m=1.0,c=0.05,k=1.0,dt=0.01)
 
 
     cend = time.time()
@@ -83,7 +90,7 @@ if __name__ == '__main__':
     #       write([t,d])
     # wend = time.time()
 
-    plt.plot(t3, sd3)
+    plt.plot(t,d)
     plt.show()
 
     print "Calculation time", (cend-cstart)
