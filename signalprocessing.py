@@ -108,6 +108,8 @@ def diego(signal,damping,sv,fm):
 def duhamel(P,m,w,xi,dt):
     """ Duhamel integral calculation.
 
+    Version: 3.0
+    Calculation time 0.349811077118
     To determine the general response of a 
     simple lineal system. 
     
@@ -131,20 +133,37 @@ def duhamel(P,m,w,xi,dt):
     # t = numpy.arange(start=0.0,stop=(tmax),step=dt)
 
     wa = w*numpy.sqrt(1-xi**2.0)
-
-    wa_x_T = map((lambda x: x*wa),T)
-
-    F = map((lambda x,y: x*y),P,numpy.cos(wa_x_T))
-    G = map((lambda x,y: x*y),P,numpy.sin(wa_x_T))
     
-    F1 = [0.0] + F[:-1]
-    G1 = [0.0] + G[:-1]
+    # Alternatives scalar and numpy array multiplication
+    # wa_x_T = map((lambda x: x*wa),T)
+    # wa_x_T = numpy.multiply(T,wa)
+    wa_x_T = T*wa
+    
+    # Aternative python list by numpy array multiplication (all has the same behavior)
+    F = map((lambda x,y: x*y),P,numpy.cos(wa_x_T))
+    # F = numpy.multiply(P,numpy.cos(wa_x_T))
+    # F = P * numpy.cos(wa_x_T)
+    
+    # Aternative python list by numpy array multiplication (all has the same behavior)
+    G = map((lambda x,y: x*y),P,numpy.sin(wa_x_T))
+    # G = numpy.multiply(P,numpy.sin(wa_x_T))
+    # G = P * numpy.sin(wa_x_T)
+    
+    # Insert, (array), (index), (value)
+    F1 = numpy.insert(F,0,0.0)[:-1]
+    G1 = numpy.insert(G,0,0.0)[:-1]
 
     Pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),F1,F)
+    # Pc = F1 * numpy.exp(-xi*w*dt) + F
+    
     Ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),G1,G)
+    # Ps = G1 * numpy.exp(-xi*w*dt) + G
 
     Pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Pc)
+    # Pc = Pc * dt / m / wa / 2.0
+    
     Ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Ps)
+    # Ps = Ps * dt / m / wa / 2.0
 
     C = [Pc[0]]
     S = [Ps[0]]
@@ -153,7 +172,9 @@ def duhamel(P,m,w,xi,dt):
         C += [ C[i-1]*numpy.exp(-xi*w*dt)+Pc[i] ] 
         S += [ S[i-1]*numpy.exp(-xi*w*dt)+Ps[i] ]
 
+    # Both answers are different ¿?
     d = map((lambda x,y,z,w: x*y-z*w), C, numpy.sin(wa_x_T), S, numpy.cos(wa_x_T))
+    # d = C * numpy.sin(wa_x_T) + S * numpy.cos(wa_x_T)
 
     return T.tolist(), d
 
