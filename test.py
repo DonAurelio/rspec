@@ -13,21 +13,37 @@ if __name__ == '__main__':
     # file = open('GO003.001','r')
     lines = file.readlines()
 
-    data = list(map(lambda x: float(x),lines))
-    data = volts_to_gales(data,1.25)
+    DATA = list(map(lambda x: float(x),lines))
+    DATA = volts_to_gales(DATA,1.25)
+    DAMPING = 0.05
+    SENSITIVITY = 1.25
+    SAMPLE_RATE = 0.01
 
     cstart = time.time()
+    # Response Espectrum Diego
+    # signal: vector de carga externa
+    # damping    
+    # sv, device sensitivity
+    # fm, sample rate
+
+    # T: oscilation periods
+    # Pd: Pseudo displacement response spectrum
+    # Pv: Pseudo displacement response spectrum
+    # Pa: Pseudo displacement response spectrum
+    # T, Pd, Pv, Pa = diego(signal=DATA,damping=DAMPING,sv=SENSITIVITY,fm=SAMPLE_RATE)
+    # plt.plot(T,Pd)
 
     # Response of a system with Duhamel Integral
     # p: vector de carga externa
     # m: masa del sistema
     # w: frecuencia natural del sistema
     # xi: fracción de amortiguamiento viscoso
-    # dt: paso de timepo
+    # dt: paso de timepo ¿o frecuencia de muestreo?
 
     # t: vector de timepo
     # d: desplazamiento de respuesta
-    # t,d = duhamel(p=data,m=1.0,w=2.0*numpy.pi,xi=0.05,dt=0.01)
+    T,D = duhamel(P=DATA,m=1.0,w=2.0*numpy.pi,xi=DAMPING,dt=SAMPLE_RATE)
+    plt.plot(T,D)
     
     # Response of a system with the Lineal Acceleration Method
     # p: vector de carga externa
@@ -54,7 +70,7 @@ if __name__ == '__main__':
     # Sd: espectro de desplzamiento
     # Sv: espectro de velocidad
     # Sa: espectro de acceleración
-    # t,d,v,a = desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
+    # t,d= desplin(acc=data,tmin=0.0,tmax=4.0,dt_period=0.02,xi=0.05,dt_accelerogram=0.01)
 
     # Response spectrum with transferFunction and lsim
     # A: Señal de acceleraciones
@@ -62,8 +78,8 @@ if __name__ == '__main__':
     # Fs: Frecuencia de adqusición
     # Tn: Periodo
 
-    # PA: Pseudo acceleración
-    # t, d = rspect(a=data,z=0.05,fs=0.01,tn=)
+    # d: Pseudo acceleración
+    # t, d = rspect(A=data,z=0.05,fs=0.01)
 
     # Response espectrum with simplified lineal acceleration method
     # p: es el accelerograma
@@ -90,7 +106,6 @@ if __name__ == '__main__':
     #       write([t,d])
     # wend = time.time()
 
-    plt.plot(t,d)
     plt.show()
 
     print "Calculation time", (cend-cstart)

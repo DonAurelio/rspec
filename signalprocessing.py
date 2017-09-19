@@ -26,15 +26,7 @@ def volts_to_gales(signal,sv):
 def max_peak(ts,accls):
     return max(zip(ts,accls), key=lambda item: abs(item[1]))
 
-def acc_time_serie(signal,fm):
-    dt = 1.0/fm;
-    signal_duration = dt * len(signal)
-    return numpy.arange(start=0.00,stop=(signal_duration+dt),step=dt).tolist()
-
-def spec_period_serie():
-    return numpy.arange(start=0.02,stop=(4.0+0.02),step=0.02).tolist()
-
-def rspectrum(signal,damping,sv,fm):
+def diego(signal,damping,sv,fm):
     """
         signal: Señal en voltios
         damping: Razón de amortiguamiento
@@ -44,7 +36,7 @@ def rspectrum(signal,damping,sv,fm):
 
     # DATOS INICIALES
     # Periodo de cada oscilador que seran sometidos a la señal de acceleraciones
-    ts = arange(start=0.02,stop=(4.0+0.02),step=0.02) 
+    ts = numpy.arange(start=0.02,stop=(4.0+0.02),step=0.02) 
 
     T = 1.0 # Periodo
     z = damping # Razón de amortiguamiento
@@ -74,22 +66,22 @@ def rspectrum(signal,damping,sv,fm):
     # Por cada periodo de oscilación
     for t in ts:
 
-        Wn=(2.0*pi)/t
+        Wn=(2.0*numpy.pi)/t
         k=M*(Wn**2.0)
         d=DT
         a1=(2.71828)**(-z*Wn*d)
-        Wd=Wn*sqrt(1.0-(z**2.0))
-        a2=sin(Wd*d)
-        a3=cos(Wd*d)
+        Wd=Wn*numpy.sqrt(1.0-(z**2.0))
+        a2=numpy.sin(Wd*d)
+        a3=numpy.cos(Wd*d)
         
-        A=a1*(((z/(sqrt(1.0-z**2.0)))*a2)+a3)
+        A=a1*(((z/(numpy.sqrt(1.0-z**2.0)))*a2)+a3)
         B=a1*((1.0/Wd)*a2)
-        C=(1.0/k)*((2.0*z/(Wn*d))+a1*((((1.0-2.0*(z**2))/(Wd*d))-(z/(sqrt(1.0-z**2.0))))*a2-(1.0+(2.0*z/(Wn*d)))*a3))
+        C=(1.0/k)*((2.0*z/(Wn*d))+a1*((((1.0-2.0*(z**2))/(Wd*d))-(z/(numpy.sqrt(1.0-z**2.0))))*a2-(1.0+(2.0*z/(Wn*d)))*a3))
         D=(1.0/k)*(1.0-(2.0*z/(Wn*d))+a1*(((2.0*(z**2.0)-1.0)/(Wd*d))*a2+(2.0*z/(Wn*d))*a3))
-        A1=-a1*(((Wn/(sqrt(1.0-z**2.0)))*a2))
-        B1=a1*(a3-((z/(sqrt(1.0-z**2.0)))*a2))
-        C1=(1.0/k)*((-1.0/d)+a1*(((Wn/(sqrt(1.0-(z**2.0))))+(z/(d*sqrt(1.0-(z**2.0)))))*a2+(a3/d)))
-        D1=(1.0/(k*d))*(1.0-a1*((z/(sqrt(1.0-(z**2.0))))*a2+a3))
+        A1=-a1*(((Wn/(numpy.sqrt(1.0-z**2.0)))*a2))
+        B1=a1*(a3-((z/(numpy.sqrt(1.0-z**2.0)))*a2))
+        C1=(1.0/k)*((-1.0/d)+a1*(((Wn/(numpy.sqrt(1.0-(z**2.0))))+(z/(d*numpy.sqrt(1.0-(z**2.0)))))*a2+(a3/d)))
+        D1=(1.0/(k*d))*(1.0-a1*((z/(numpy.sqrt(1.0-(z**2.0))))*a2+a3))
 
         uis = [0.0]
         upis = [0.0] 
@@ -113,7 +105,7 @@ def rspectrum(signal,damping,sv,fm):
 
     return Ts,Dmaxs,Vmaxs,Amaxs
 
-def duhamel(p,m,w,xi,dt):
+def duhamel(P,m,w,xi,dt):
     """ Duhamel integral calculation.
 
     To determine the general response of a 
@@ -122,7 +114,7 @@ def duhamel(p,m,w,xi,dt):
     by: Jorge E. Hurtado G.
     Universidad Nacional de Colombia
 
-    p: vector de carga externa
+    P: vector de carga externa
     m: masa del sistema
     w: frecuencia natural del sistema
     xi: fracción de amortiguamiento viscoso
@@ -133,35 +125,37 @@ def duhamel(p,m,w,xi,dt):
         
     """
 
-    n = len(p)
+    n = len(P)
     tmax = dt*n
-    t = numpy.linspace(start=0.0,stop=tmax,num=n)
+    T = numpy.linspace(start=0.0,stop=tmax,num=n)
     # t = numpy.arange(start=0.0,stop=(tmax),step=dt)
 
     wa = w*numpy.sqrt(1-xi**2.0)
 
-    f = map((lambda x,y: x*y),p,numpy.cos(wa*t))
-    g = map((lambda x,y: x*y),p,numpy.sin(wa*t))
+    wa_x_T = map((lambda x: x*wa),T)
+
+    F = map((lambda x,y: x*y),P,numpy.cos(wa_x_T))
+    G = map((lambda x,y: x*y),P,numpy.sin(wa_x_T))
     
-    f1 = [0.0] + f[:-1]
-    g1 = [0.0] + g[:-1]
+    F1 = [0.0] + F[:-1]
+    G1 = [0.0] + G[:-1]
 
-    pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),f1,f)
-    ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),g1,g)
+    Pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),F1,F)
+    Ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),G1,G)
 
-    pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),pc)
-    ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),ps)
+    Pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Pc)
+    Ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Ps)
 
-    c = [pc[0]]
-    s = [ps[0]]
+    C = [Pc[0]]
+    S = [Ps[0]]
 
     for i in range(1,n):
-        c += [ c[i-1]*numpy.exp(-xi*w*dt)+pc[i] ] 
-        s += [ c[i-1]*numpy.exp(-xi*w*dt)+pc[i] ]
+        C += [ C[i-1]*numpy.exp(-xi*w*dt)+Pc[i] ] 
+        S += [ S[i-1]*numpy.exp(-xi*w*dt)+Ps[i] ]
 
-    d = map((lambda x,y,z,w: x*y-z*w),c,numpy.sin(wa*t),s,numpy.cos(wa*t))
+    d = map((lambda x,y,z,w: x*y-z*w), C, numpy.sin(wa_x_T), S, numpy.cos(wa_x_T))
 
-    return t.tolist(), d
+    return T.tolist(), d
 
 def dmaclin(p,m,w,xi,dt):
     """ Lineal Acceleration Method.
@@ -252,45 +246,56 @@ def desplin(acc,tmin,tmax,dt_period,xi,dt_accelerogram):
 
     for j in range(int(m)):
         w = W[j]
-        t, d,v,a = dmaclin(map( (lambda x: x*(-1.0)) ,acc), 1.0,w,xi,dt_accelerogram) 
+        # t, d,v,a = dmaclin(map( (lambda x: x*(-1.0)) ,acc), 1.0,w,xi,dt_accelerogram)
+        # Sd.append(max(map(lambda x: abs(x),d)))
+        # Sv.append(max(map(lambda x: abs(x),v)))
+        # Sa.append(max(map(lambda x: abs(x),a)))
+
+     # return T.tolist(), Sd, Sv, Sa
+
+        t, d = duhamel(map( (lambda x: x*(-1.0)) ,acc), 1.0,w,xi,dt_accelerogram) 
         Sd.append(max(map(lambda x: abs(x),d)))
-        Sv.append(max(map(lambda x: abs(x),v)))
-        Sa.append(max(map(lambda x: abs(x),a)))
 
-    return T.tolist(), Sd, Sv, Sa
+    return T.tolist(), Sd
 
-# Arrays in mayus
-def rspect(a,z,fs,tn):
+def rspect(A,z,fs):
     """
         by Omar
 
         A: Señal de acceleraciones
-        Z: amortiguamiento
-        Fs: Frecuencia de adqusición
-        Tn: Periodo
+        z: amortiguamiento
+        fs: Frecuencia de adqusición o muestreo
     """
 
-    t = [ (x*1/fs) for x in range(0,len(a))]
+    # ¿Qué es T?
+    T = [ (x*1/fs) for x in range(0,len(A))]
+    # Pseudo acceleration response spectrum
+    Pa = []
+    #  Oscilator periods for start=0.0,stop=4.0,step=0.02
+    Ts = spec_period_serie()
+ 
+    for i in range(len(Ts)):
+        t = Ts[i]
+        wn = (2.0*numpy.pi)/t
 
-    PA = []
+        # H = sg.TransferFunction(num=[0.0, 0.0, -1.0], den=[1.0, 2.0*z*wn, wn**2])
+        # H2 = sg.TransferFunction(num=[-1.0, 0.0, 0.0], den=[1.0, 2.0*z*wn, wn**2])
+        H = sg.TransferFunction([-1.0, 0.0, 0.0],[wn, 2.0*z*wn, 1.0])
+        H2 = sg.TransferFunction([0.0, 0.0, -1.0],[wn, 2.0*z*wn, 1.0 ])
 
-    for i in range(tn):
-        T = tn[i]
-        wn = (2.0*numpy.pi)/T
+        # tout, a 1D array, time values for the output
+        # yout, 1D array system response
+        # xout, time evolution of the state vector
+        # displacement response
+        Tout, Yout, Xout = sg.lsim(system=H,U=A,T=T)
+        # acceleration response
+        Tout1, Yout1, Xout1 = sg.lsim(system=H2, U=A,T=T)
+        D = max(map(lambda x: abs(x),Yout)) 
+        EA = max(map(lambda x: abs(x),Yout1)) # No sé donde se usa esta variable
+        
+        Pa.append( D * (2*numpy.pi/Ts[i]) ** 2/9.81 ) # ¿Es acceleración o desplazamiento?
 
-        H = sg.TransferFunction(num=[0.0, 0.0, -1.0], den=[1.0, 2.0*z*wn, wn**2])
-        H2 = sg.TransferFunction(num=[-1.0, 0.0, 0.0], den=[1.0, 2.0*z*wn, wn**2])
-
-        De = sg.lsim(system=H,U=a,T=T)
-        Ac = sg.lsim(system=H2, U=a,T=T)
-
-        D = max(map(lambda x: abs(x),De))
-        EA = max(map(lambda x: abs(x),AC)) # No sé donde se usa esta variable
-
-        PA.append( D * (2*numpy.pi/tn[i]) ** 2/9.81 )
-
-        return t, PA
-
+    return Ts, Pa
 
 def lineal(p,m,c,k,dt):
     """Respuesta en tiempo de un sistema de un grado de
