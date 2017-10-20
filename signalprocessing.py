@@ -130,40 +130,53 @@ def duhamel(P,m,w,xi,dt):
     n = len(P)
     tmax = dt*n
     T = numpy.linspace(start=0.0,stop=tmax,num=n)
-    # t = numpy.arange(start=0.0,stop=(tmax),step=dt)
+    # T = numpy.arange(start=0.0,stop=(tmax),step=dt)
 
     wa = w*numpy.sqrt(1-xi**2.0)
-    
+
     # Alternatives scalar and numpy array multiplication
     # wa_x_T = map((lambda x: x*wa),T)
     # wa_x_T = numpy.multiply(T,wa)
     wa_x_T = T*wa
-    
+
     # Aternative python list by numpy array multiplication (all has the same behavior)
-    F = map((lambda x,y: x*y),P,numpy.cos(wa_x_T))
+    # F = map((lambda x,y: x*y),P,numpy.cos(wa_x_T))
     # F = numpy.multiply(P,numpy.cos(wa_x_T))
-    # F = P * numpy.cos(wa_x_T)
-    
+    F = P * numpy.cos(wa_x_T)
+
     # Aternative python list by numpy array multiplication (all has the same behavior)
-    G = map((lambda x,y: x*y),P,numpy.sin(wa_x_T))
-    # G = numpy.multiply(P,numpy.sin(wa_x_T))
+    # G = map((lambda x,y: x*y),P,numpy.sin(wa_x_T))
+    G = numpy.multiply(P,numpy.sin(wa_x_T))
     # G = P * numpy.sin(wa_x_T)
+
+    #  the first value differs 
+    # for f in G:
+    #     print round(f,4)
     
     # Insert, (array), (index), (value)
     F1 = numpy.insert(F,0,0.0)[:-1]
     G1 = numpy.insert(G,0,0.0)[:-1]
 
-    Pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),F1,F)
-    # Pc = F1 * numpy.exp(-xi*w*dt) + F
-    
-    Ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),G1,G)
-    # Ps = G1 * numpy.exp(-xi*w*dt) + G
+    # the second value differs
+    # for value in G1:
+    #     print round(value,4)
 
-    Pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Pc)
-    # Pc = Pc * dt / m / wa / 2.0
+    # Pc = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),F1,F)
+    Pc = F1 * numpy.exp(-xi*w*dt) + F
+
+    # Ps = map((lambda x,y: x*numpy.exp(-xi*w*dt)+y),G1,G)
+    Ps = G1 * numpy.exp(-xi*w*dt) + G
+
+    # Pc = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Pc)
+    Pc = Pc  * dt 
+    # / m / wa / 2.0
+
+    # ERROR NO COINCIDE
+    for value in Pc:
+        print round(value,5)
     
-    Ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Ps)
-    # Ps = Ps * dt / m / wa / 2.0
+    # Ps = map((lambda x: ((((x*dt)/m)/wa)/2.0) ),Ps)
+    Ps = Ps * dt / m / wa / 2.0
 
     C = [Pc[0]]
     S = [Ps[0]]
@@ -173,8 +186,8 @@ def duhamel(P,m,w,xi,dt):
         S += [ S[i-1]*numpy.exp(-xi*w*dt)+Ps[i] ]
 
     # Both answers are different ¿?
-    d = map((lambda x,y,z,w: x*y-z*w), C, numpy.sin(wa_x_T), S, numpy.cos(wa_x_T))
-    # d = C * numpy.sin(wa_x_T) + S * numpy.cos(wa_x_T)
+    # d = map((lambda x,y,z,w: x*y-z*w), C, numpy.sin(wa_x_T), S, numpy.cos(wa_x_T))
+    d = C * numpy.sin(wa_x_T) + S * numpy.cos(wa_x_T) # I beleive this is the correct
 
     return T.tolist(), d
 

@@ -8,12 +8,12 @@ import numpy
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    file = open('KD003.002','r')
+    file = open('KD003.003','r')
     # file = open('GO003.001','r')
     lines = file.readlines()
 
     DATA = list(map(lambda x: float(x),lines))
-    DATA = volts_to_gales(DATA,1.25)
+    #DATA = volts_to_gales(DATA,1.25)
     DAMPING = 0.05
     SENSITIVITY = 1.25
     SAMPLE_RATE = 0.01
